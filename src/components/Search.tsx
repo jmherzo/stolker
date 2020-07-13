@@ -12,6 +12,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 // Types
 import { ICompanySymbol } from "../types/ICompanySymbol";
+import { IDataset } from "../types/IDataset";
 
 export interface ISearchProps {
   isInvalid: boolean;
@@ -20,6 +21,9 @@ export interface ISearchProps {
   companySymbols: string[];
   companyProfiles?: { [symbol: string]: ICompanySymbol };
   symbolToSearch: string;
+  selectedSymbol?: IDataset;
+  onSelectSymbol: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onDeselectSymbol: () => void;
   onChangeSearchField: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onAdd: () => void;
@@ -32,6 +36,9 @@ const Search: React.FC<ISearchProps> = ({
   companySymbols,
   companyProfiles,
   symbolToSearch,
+  selectedSymbol,
+  onSelectSymbol,
+  onDeselectSymbol,
   onChangeSearchField,
   onDelete,
   onAdd,
@@ -85,9 +92,37 @@ const Search: React.FC<ISearchProps> = ({
                       <Typography>
                         ${companyProfiles[symbol].price || "--"}
                       </Typography>
+                      <br />
+                      <Button
+                        data-id={symbol}
+                        size="medium"
+                        disabled={
+                          Boolean(selectedSymbol) &&
+                          companyProfiles[symbol].symbol !==
+                            selectedSymbol?.symbol
+                        }
+                        onClick={
+                          Boolean(selectedSymbol)
+                            ? onDeselectSymbol
+                            : onSelectSymbol
+                        }
+                        variant="contained"
+                        color="primary"
+                      >
+                        {Boolean(selectedSymbol) &&
+                        companyProfiles[symbol].symbol ===
+                          selectedSymbol?.symbol
+                          ? "Deselect"
+                          : "Select"}
+                      </Button>
                     </Grid>
                     <Grid item xs={2}>
                       <IconButton
+                        disabled={
+                          Boolean(selectedSymbol) &&
+                          companyProfiles[symbol].symbol ===
+                            selectedSymbol?.symbol
+                        }
                         color="secondary"
                         data-id={symbol}
                         aria-label="delete button"
